@@ -2,28 +2,28 @@
 
 > **Context-Aware AI Code Review** — AMD Developer Hackathon 2026
 
-Sistema multi-agente que **aprende seu repositório** primeiro (AST + knowledge graph 3D), depois faz code review **contextualizado** dos seus PRs.
+Multi-agent system that **learns your repository** first (AST + 3D knowledge graph), then runs **context-aware** code review on your PRs.
 
 ---
 
-## 🎯 Diferenciais
+## 🎯 Key features
 
-1. **AST analysis** com tree-sitter — extrai símbolos, imports, dependências reais
-2. **Knowledge graph 3D** interativo — Three.js, force-directed, mostra arquitetura visualmente
-3. **Project profile automático** — arquitetura, padrões, convenções (via LLM)
-4. **Multi-query retrieval** — busca por arquivo, símbolo e semântica
-5. **Reviewer com few-shot** — exemplos de boa vs má justificativa
-6. **Critic adversarial** — filtra issues genéricos antes do relatório
-7. **Privacy first** — Ollama local, código nunca sai da sua máquina
-8. **Secrets seguros** — config centralizado, mascaramento automático em logs
+1. **AST analysis** with tree-sitter — extracts symbols, imports, real dependencies
+2. **Interactive 3D knowledge graph** — Three.js, force-directed, visualizes architecture
+3. **Automatic project profile** — architecture, patterns, conventions (via LLM)
+4. **Multi-query retrieval** — search by file, symbol, and semantics
+5. **Reviewer with few-shot** — examples of good vs. bad justification
+6. **Adversarial Critic** — filters generic issues before the final report
+7. **Privacy first** — local Ollama, your code never leaves your machine
+8. **Secure secrets** — centralized config, automatic masking in logs
 
 ---
 
-## 🏗️ Arquitetura
+## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│  INDEXER (1x por repo)                              │
+│  INDEXER (runs once per repo)                       │
 │  Files → AST (tree-sitter) → Knowledge Graph        │
 │              ↓                                      │
 │       Project Profile (LLM)                         │
@@ -41,8 +41,8 @@ Sistema multi-agente que **aprende seu repositório** primeiro (AST + knowledge 
 │                                     ↓               │
 │                                  Report             │
 │                                                     │
-│  Arquivos do contexto BRILHAM no grafo 3D em        │
-│  tempo real durante a execução                      │
+│  Context files GLOW in the 3D graph in real time    │
+│  while the pipeline runs                            │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -50,22 +50,22 @@ Sistema multi-agente que **aprende seu repositório** primeiro (AST + knowledge 
 
 ## 🚀 Quick Start (Windows)
 
-### Pré-requisitos
+### Prerequisites
 - Python 3.11+
 - Node.js 18+
-- [Ollama](https://ollama.com/download/windows) instalado
+- [Ollama](https://ollama.com/download/windows) installed
 
-### Setup automático
+### Automatic setup
 
-Na pasta do projeto:
+From the project folder:
 
 ```cmd
 setup.bat
 ```
 
-Faz tudo: cria venv, instala deps, baixa modelo Ollama, valida.
+Does everything: creates the venv, installs deps, pulls the Ollama model, validates.
 
-### Rodar
+### Run
 
 ```cmd
 :: Terminal 1
@@ -75,71 +75,71 @@ run_backend.bat
 run_frontend.bat
 ```
 
-Abre http://localhost:5173
+Open http://localhost:5173
 
-### Buildar como EXE
+### Build as EXE
 
-Pra gerar um `RepoMind.exe` único (frontend + backend num executável):
+To produce a single `RepoMind.exe` (frontend + backend bundled):
 
 ```cmd
 build.bat
 ```
 
-Resultado: `dist\RepoMind.exe` (~500MB). Veja **BUILD_EXE.md** pra detalhes.
+Output: `dist\RepoMind.exe` (~500MB). See **BUILD_EXE.md** for details.
 
 ---
 
-## 🔐 Segurança das credenciais
+## 🔐 Credentials security
 
-API keys **NUNCA** ficam no código. Tudo passa pelo `.env`:
+API keys are **NEVER** stored in code. Everything goes through `.env`:
 
 ```
-backend/.env             ← suas credenciais (NÃO committar)
-backend/.env.example     ← template (pode committar)
-backend/config.py        ← carrega e valida secrets
-.gitignore               ← protege .env
+backend/.env             ← your credentials (DO NOT commit)
+backend/.env.example     ← template (safe to commit)
+backend/config.py        ← loads and validates secrets
+.gitignore               ← protects .env
 ```
 
-O backend:
-- Valida config no startup e falha cedo se faltar algo
-- Mascara automaticamente qualquer credencial que apareça em logs
-- Endpoint `/config` retorna info pública (provider/modelo) **sem keys**
-- WebSockets sanitizam mensagens antes de enviar ao frontend
+The backend:
+- Validates config on startup and fails fast if anything is missing
+- Automatically masks any credential that shows up in logs
+- The `/config` endpoint returns public info (provider/model) **without keys**
+- WebSockets sanitize messages before sending them to the frontend
 
-Trocar de provider (Ollama → AMD Cloud → Groq) é só editar `.env`. Zero código alterado.
+Switching providers (Ollama → AMD Cloud → Groq) is just editing `.env`. Zero code changes.
 
 ---
 
 ## 🎨 Interface
 
-**Knowledge Graph 3D** (Three.js):
-- Nodes = arquivos, tamanho proporcional a LOC
-- Cores por linguagem
+**3D Knowledge Graph** (Three.js):
+- Nodes = files, size proportional to LOC
+- Colors by language
 - Edges = imports
-- Drag pra rotacionar, scroll pra zoom, click nos nodes
-- **Durante o review, arquivos do contexto pulsam em vermelho** mostrando exatamente o que o RAG recuperou
+- Drag to rotate, scroll to zoom, click nodes to inspect
+- **During review, context files pulse in red** showing exactly what the RAG retrieved
 
-**Pipeline visualizer** ao vivo:
-- Cada agente acende verde com timing
-- Mostra queries usadas, contexto recuperado, issues levantados vs filtrados pelo Critic
+**Live pipeline visualizer**:
+- Each agent lights up green with timing
+- Shows queries used, retrieved context, issues raised vs. filtered out by the Critic
 
 ---
 
-## 📁 Estrutura
+## 📁 Structure
 
 ```
 repomind/
-├── setup.bat              ← setup automático Windows
-├── run_backend.bat        ← liga backend
-├── run_frontend.bat       ← liga frontend
+├── setup.bat              ← automatic Windows setup
+├── run_backend.bat        ← starts the backend
+├── run_frontend.bat       ← starts the frontend
 ├── README.md
-├── .gitignore             ← protege secrets
+├── .gitignore             ← protects secrets
 │
 ├── backend/
-│   ├── config.py          ← config + sanitização de secrets
+│   ├── config.py          ← config + secret sanitization
 │   ├── agents/
 │   │   ├── llm_client.py
-│   │   ├── code_analyzer.py    ← AST com tree-sitter
+│   │   ├── code_analyzer.py    ← AST via tree-sitter
 │   │   ├── indexer.py          ← + serialize_graph_for_viz
 │   │   ├── diff_parser.py
 │   │   ├── contextualizer.py
@@ -168,9 +168,9 @@ repomind/
 
 ---
 
-## 🔧 Trocar provider
+## 🔧 Switching provider
 
-Edita `backend/.env`:
+Edit `backend/.env`:
 
 **Ollama (default, local)**
 ```
@@ -179,14 +179,14 @@ AMD_API_KEY=ollama
 AMD_MODEL=qwen2.5-coder:14b
 ```
 
-**AMD Developer Cloud** (quando créditos chegarem)
+**AMD Developer Cloud** (when credits arrive)
 ```
 AMD_BASE_URL=https://api.amd.com/v1
-AMD_API_KEY=sua_amd_key
+AMD_API_KEY=your_amd_key
 AMD_MODEL=Qwen/Qwen2.5-Coder-32B-Instruct
 ```
 
-**Groq** (gratuito, rápido)
+**Groq** (free, fast)
 ```
 AMD_BASE_URL=https://api.groq.com/openai/v1
 AMD_API_KEY=gsk_...
@@ -197,20 +197,20 @@ AMD_MODEL=qwen-2.5-coder-32b
 
 ## 🎬 Demo flow
 
-1. Aponta pra um projeto Python real (FastAPI/Django/qualquer coisa)
-2. **Indexação ao vivo** → grafo 3D aparece, profile extraído
-3. Cola um diff que viola um padrão específico do projeto
-4. **Pipeline streaming** → cada agente acende, contexto é recuperado
-5. **Arquivos relevantes pulsam no grafo 3D** ← este é o "wow moment"
-6. Resultado: issues com justificativa específica do projeto
+1. Point it at a real Python project (FastAPI/Django/anything)
+2. **Live indexing** → 3D graph appears, profile extracted
+3. Paste a diff that violates a project-specific pattern
+4. **Streaming pipeline** → each agent lights up, context is retrieved
+5. **Relevant files pulse in the 3D graph** ← this is the "wow moment"
+6. Result: issues with project-specific justification
 
 ---
 
 ## ⚙️ Stack
 
-| Componente | Tech |
+| Component | Tech |
 |---|---|
-| Orquestração | LangGraph |
+| Orchestration | LangGraph |
 | LLM | Qwen2.5-Coder via Ollama / AMD ROCm |
 | AST | tree-sitter |
 | Embeddings | BAAI/bge-small-en-v1.5 (local CPU) |
@@ -224,17 +224,17 @@ AMD_MODEL=qwen-2.5-coder-32b
 
 ## 🐛 Troubleshooting
 
-**"AMD_API_KEY não configurada"**
+**"AMD_API_KEY not configured"**
 → `cd backend && copy .env.example .env`
 
-**"Não consegui conectar em localhost:11434"**
-→ Ollama não tá rodando. Abre o app (ícone na bandeja) ou `ollama serve`.
+**"Could not connect to localhost:11434"**
+→ Ollama isn't running. Open the app (tray icon) or run `ollama serve`.
 
-**"Modelo não instalado"**
+**"Model not installed"**
 → `ollama pull qwen2.5-coder:14b`
 
-**Pipeline lento**
-→ Verifica no Task Manager se a GPU tá sendo usada. Se cair na CPU, reinstala drivers NVIDIA. Ou usa modelo menor: `ollama pull qwen2.5-coder:7b`
+**Slow pipeline**
+→ Check Task Manager to see if the GPU is actually being used. If it falls back to CPU, reinstall NVIDIA drivers. Or use a smaller model: `ollama pull qwen2.5-coder:7b`
 
-**Grafo 3D não aparece**
-→ Indexa um repo primeiro (passo 01 da UI). Depois selecione ele em "REPOS".
+**3D graph doesn't show up**
+→ Index a repo first (step 01 in the UI). Then select it under "REPOS".
