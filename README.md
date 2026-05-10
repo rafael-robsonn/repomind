@@ -4,6 +4,8 @@
 
 Multi-agent system that **learns your repository** first (AST + 3D knowledge graph), then runs **context-aware** code review on your PRs.
 
+## > **Note: This application is designed to run locally for privacy and performance. Follow the installation guide below to run the demo.**
+
 ---
 
 ## 🎯 Key features
