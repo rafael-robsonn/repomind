@@ -1,0 +1,24 @@
+diff --git a/src/services/order_service.py b/src/services/order_service.py
+index abc123..def456 100644
+--- a/src/services/order_service.py
++++ b/src/services/order_service.py
+@@ -45,6 +45,18 @@ class OrderService:
+     def get_order(self, order_id: int) -> Order:
+         return self.db.query(Order).filter(Order.id == order_id).first()
+ 
++    def cancel_order(self, oid):
++        order = self.db.query(Order).filter(Order.id == oid).first()
++        order.status = "cancelled"
++        self.db.commit()
++        return True
++
++    def list_orders(self):
++        results = self.db.query(Order).all()
++        out = []
++        for r in results:
++            out.append({"id": r.id, "status": r.status, "total": r.total})
++        return out
++
+     def update_order(self, order_id: int, data: dict) -> Order:
+         order = self.get_order(order_id)
+         for k, v in data.items():
